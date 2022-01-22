@@ -1,266 +1,158 @@
-<?php
-// Proses Delete Data
-if (isset($_GET['delete'])) {
-    $id = $_GET['id'];
-    $query_delete = mysqli_query($koneksi,"DELETE FROM anggota WHERE id_anggota = '$id'");
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Petugas</title>
+        <link rel="stylesheet" href="bootstrap-5.1.3-dist/css/bootstrap.min.css">
+    </head>
+    <body>
+    <?php
 
-    //Jika query delete berhasil maka munculkan notifikasi dan refresh halaman
-    if ($query_delete) {
-        ?>
-        <div class="alert alert-success">
-            Data Berhasil DIHAPUS !!!!!!!!!!
-        </div>
-        <?php
-        header('Refresh:2; URL=http://localhost/02_mywebsite_12rpl2/admin.php?page=anggota');
-    }
-}
-// end of proses delete
 
-// Proses Insert Tambah Data
-if(isset($_POST['simpan']))
-{
+    //Proses insert data
+    if (isset($_POST['save'])) {
     $nis        = $_POST['nis'];
     $nama       = $_POST['nama'];
-    $kelas      = $_POST['kelas'];
-    $jurusan    = $_POST['jurusan'];
+    $jk         = $_POST['jk'];
+    $tmpt_lahir = $_POST['tempat_lahir'];
     $tgl_lahir  = $_POST['tanggal_lahir'];
-    $tlp        = $_POST['no_telpon'];
+    $kelas      = $_POST['id_kelas'];
+    $jurusan    = $_POST['id_jurusan'];
+    $tlp        = $_POST['nomor_telepon'];
     $alamat     = $_POST['alamat'];
-    $jk         = $_POST['jenis_kelamin'];
-
     $query_insert = mysqli_query($koneksi,"INSERT INTO anggota 
-    VALUES('','$nis','$nama','$kelas','$jurusan','$tgl_lahir','$tlp','$alamat',
-    '$jk')");
-    
-    // Membuat notifikasi jika berhasil/tidak disimpn datany
-    if($query_insert) 
-    {
-        ?>
-            <div class="alert alert-success">
-                Data Berhasil Disimpan !!!
-            </div>
-        <?php
-        header('Refresh:2; URL=http://localhost/02_mywebsite_12rpl2/admin.php?page=anggota');
+    VALUES('','$nis','$nama','$jk','$tmpt_lahir','$tgl_lahir','$kelas','$jurusan','$tlp','$alamat')");
+        if($query_insert)
+        {
+            ?>
+                <div class="alert alert-success">
+                    Data Berhasil Disimpan
+                </div>
+            <?php
+            header('refresh:1; URL=http://localhost/perpustakaan/admin.php?page=anggota');
+        }
+        else
+        {
+            ?>
+                <div class="alert alert-danger">
+                    Data GAGAL Disimpan !!!!!!!!!
+                </div>
+            <?php
+        }
     }
-    else
-    {
-        ?>
-            <div class="alert alert-danger">
-                Data GAGAL Disimpan !!!
-            </div>
-        <?php
-    }
-
-}
-//
-?>
-<center><h4 class="mt-4 mb-3">Data Anggota</h4></center>
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#inputdata">
+    //// End of proses insert /////////////////////////////////////////////////////////
+    ?>
+    <center><h1 class="mt-4 mb-3">Data Anggota</h1></center>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-success mb-1" data-bs-toggle="modal" data-bs-target="#tambahanggota">
     Tambah Data
-</button>
-<!-- ------------------------------------------------------------------------------------- -->
-<table class="table table-striped table-hover">
-    <tr>
-        <th>No</th>
-        <th>NIS</th>
-        <th>Nama</th>
-        <th>Kelas</th>
-        <th>Jurusan</th>
-        <th>Tgl Lahir</th>
-        <th>Tlp</td>
-        <th>Alamat</th>
-        <th>Gender</th>
-        <th>--Action--</th>
-    </tr>
-    <?php
-        $query = mysqli_query($koneksi,"SELECT * FROM anggota");
-        $no = 1;
-        foreach ($query as $row) {
-    ?>
-    <tr>
-        <td align="center" valign="middle"><?php echo $no; ?></td>
-        <td valign="middle"><?php echo $row['nis']; ?></td>
-        <td valign="middle"><?php echo $row['nama']; ?></td>
-        <td valign="middle"><?php echo $row['kelas']; ?></td>
-        <td valign="middle">
+    </button>
+    <table class="table table-dark">
+
+        <tr class="text-center">
+            <th>No</th>
+            <th>NIS</th>
+            <th>Nama</th>
+            <th>Gender</th>
+            <th>Tmpt lahir</th>
+            <th>Tgl Lahir</th>
+            <th>Kelas</th>
+            <th>Jurusan</th>
+            <th>Tlp</td>
+            <th>Alamat</th>
+            <th>--Action--</th>
+        </tr>
         <?php
-            if ($row['jurusan']=='RPL') {
-                echo "Rekayasa Perangkat Lunak";
-            }elseif($row['jurusan']=='TAV'){
-                echo "Teknik Audio Video";
-            }elseif($row['jurusan']=='TKR'){
-                echo "Teknik Kendaraan Ringan";
-            }else{
-                echo "Teknik Instalasi Tenaga Listrik";
-            }
+            $query = mysqli_query($koneksi,"SELECT * FROM anggota");
+            $no = 1;
+            foreach ($query as $row) {
         ?>
-            <?php echo $row['jurusan']; ?>
-        </td>
-        <td valign="middle"><?php echo $row['tanggal_lahir']; ?></td>
-        <td valign="middle"><?php echo $row['no_telpon']; ?></td>
-        <td valign="middle"><?php echo $row['alamat']; ?></td>
-        <td align="center" valign="middle">
-            <?php echo $row['jenis_kelamin']; ?>
-        </td>
-        <td valign="middle">
-        <a href="?page=anggota&delete&id=<?php echo $row['id_anggota']; ?>">
-            <button class="btn btn-danger">Hapus</button>
-        </a>
-        <a  href="?page=anggota&edit&id=<?php echo $row['id_anggota']; ?>">
-            <button class="btn btn-warning" >Edit</button>
-        </a>
-        </td>
-    </tr>
-    <?php
-    $no++;
-    }
-    ?>
-</table>
-<!-- ------------------------------------------------------------------------- -->
+        <tr>
+            <td align="center" valign="middle"><?php echo $no; ?></td>
+            <td valign="middle"><?php echo $row['nis']; ?></td>
+            <td valign="middle"><?php echo $row['nama']; ?></td>
+            <td align="center" valign="middle"><?php echo $row['jk']=="L"?"Laki-laki":"Perempuan"; ?></td>
+            <td valign="middle"><?php echo $row['tempat_lahir']; ?></td>
+            <td valign="middle"><?php echo $row['tanggal_lahir']; ?></td>
+            <td valign="middle"><?php echo $row['id_kelas']; ?></td>
+            <td valign="middle"><?php echo $row['id_jurusan']; ?></td>
+            <td valign="middle"><?php echo $row['nomor_telepon']; ?></td>
+            <td valign="middle"><?php echo $row['alamat']; ?></td>
+            <td valign="middle">
+                <a href="?page=anggota-delete&delete=&id=<?php echo $row['id_anggota'];?>">
+                    <button class="btn btn-danger">Hapus<i class="fas fa-trash-alt"></i></button>
+                </a>
+                <a href="?page=anggota-edit&edit=&id=<?php echo $row['id_anggota'];?>">
+                    <button class="btn btn-warning">Edit<i class="fas fa-edit"></i></button>
+                </a>
+            </td>
+        </tr>
+        <?php
+        $no++;
+        }
+        ?>
+    </table>
 
-
-<!-- Modal Input Data -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Tambah Data Anggota</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-        <!-- Form Input Anggota -------------------------------------------------------- -->
-            <form action="" method="post">
-                <div class="form-group">
-                    <input class="form-control" type="text" name="nis" placeholder="NIS" required>
-                </div>
-                <div class="form-group mt-2">
-                    <input class="form-control" type="text" name="nama" placeholder="Nama Siswa" required>
-                </div>
-                <div class="form-group mt-2">
-                    <select class="form-control" name="kelas">
-                        <option value="">--Pilih Kelas--</option>
-                        <option value="X">X</option>
-                        <option value="XI">XI</option>
-                        <option value="XII">XII</option>
-                    </select>
-                </div>
-                <div class="form-group mt-2">
-                    <select class="form-control" name="jurusan">
-                        <option value="">--Pilih Jurusan--</option>
-                        <option value="RPL">Rekayasa Perangkat Lunak</option>
-                        <option value="TAV">Teknik Audio Video</option>
-                        <option value="TKR">Teknik Kendaraan Ringan</option>
-                        <option value="TITL">Teknik Instalasi Tenaga Listrik</option>
-                    </select>
-                </div>
-                <div class="form-group mt-2">
+    <!-- Modal -->
+    <div class="modal fade" id="tambahanggota" tabindex="-1" aria-labelledby="tambahanggotaLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tambahanggotaLabel">Form Tambah Anggota</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post">
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="nis" placeholder="Nomor Induk Siswa" required>
+                    </div>
+                    <div class="form-group mt-2">
+                        <input class="form-control" type="text" name="nama" placeholder="Nama Lengkap" required>
+                    </div>
+                    <div class="form-group mt-2">
+                        <select class="form-control" name="id_kelas" required="">
+                            <option value="">--Pilih Kelas--</option>
+                            <option value="XIIRPL1">XII RPL 1</option>
+                            <option value="XIIRPL2">XII RPL 2</option>
+                            <option value="XIIRPL3">XII RPL 3</option>
+                        </select>
+                    </div>
+                    <div class="form-group mt-2">
+                        <select class="form-control" name="id_jurusan" required="">
+                            <option value="">--Pilih Jurusan--</option>
+                            <option value="RPL">Rekayasa Perangkat Lunak</option>
+                            <option value="TAV">Teknik Audio Video</option>
+                            <option value="TKR">Teknik Kendaraan Ringan</option>
+                            <option value="TITL">Teknik Instalasi Tenaga Listrik</option>
+                        </select>
+                    </div>
+                    <div class="form-group mt-2">
+                        <input class="form-control" type="text" name="tempat_lahir">
+                    </div>
+                    <div class="form-group mt-2">
                     <div class="input-group">
-                        <span class="input-group-text" >Tanggal Lahir</span>
                         <input class="form-control" type="date" name="tanggal_lahir">
                     </div>
-                </div>
-                <div class="form-group mt-2">
-                    <input class="form-control" type="text" name="no_telpon" placeholder="No Telepon">
-                </div>
-                <div class="form-group mt-2">
-                    <textarea class="form-control" name="alamat" placeholder="Alamat Lengkap"></textarea>
-                </div>
-                <div class="form-group mt-2">
-                    <select class="form-control" name="jenis_kelamin">
-                        <option value="">--Pilih Gender--</option>
-                        <option value="L">Laki-laki</option>
-                        <option value="P">Perempuan</option>
-                    </select>
-                </div>
-        <!-- ---------------------------------------------------------------------------- -->
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button class="btn btn-success mt-2" type="submit" name="simpan">Simpan</button>
-        </div>
-            <!-- tag tutup formnya pinda ke sini -->
-            </form>
-            <!-- ------------------------------- -->
-        </div>
-    </div>
-</div>
-<!-- End of modal input data -->
-
-
-<!-- Modal Edit Data -->
-<!-- <?php
-if (isset($_GET['edit'])) {
-?> -->
-<script>
-	$(document).ready(function(){
-		$("#edit-modal").modal('show');
-	});
-</script>
-<div class="modal fade" id="edit-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Edit Data Anggota</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-        <!-- Form Edit Anggota -------------------------------------------------------- -->
-            <form action="" method="post">
-                <div class="form-group">
-                    <input class="form-control" type="text" name="nis" placeholder="NIS" required>
-                </div>
-                <div class="form-group mt-2">
-                    <input class="form-control" type="text" name="nama" placeholder="Nama Siswa" required>
-                </div>
-                <div class="form-group mt-2">
-                    <select class="form-control" name="kelas">
-                        <option value="">--Pilih Kelas--</option>
-                        <option value="X">X</option>
-                        <option value="XI">XI</option>
-                        <option value="XII">XII</option>
-                    </select>
-                </div>
-                <div class="form-group mt-2">
-                    <select class="form-control" name="jurusan">
-                        <option value="">--Pilih Jurusan--</option>
-                        <option value="RPL">Rekayasa Perangkat Lunak</option>
-                        <option value="TAV">Teknik Audio Video</option>
-                        <option value="TKR">Teknik Kendaraan Ringan</option>
-                        <option value="TITL">Teknik Instalasi Tenaga Listrik</option>
-                    </select>
-                </div>
-                <div class="form-group mt-2">
-                    <div class="input-group">
-                        <span class="input-group-text" >Tanggal Lahir</span>
-                        <input class="form-control" type="date" name="tanggal_lahir">
+                    <div class="form-group mt-2">
+                        <select class="form-control" name="jk">
+                            <option value="">--Pilih Jenis Kelamin--</option>
+                            <option value="L">Laki-laki</option>
+                            <option value="P">Perempuan</option>
+                        </select>
                     </div>
-                </div>
-                <div class="form-group mt-2">
-                    <input class="form-control" type="text" name="no_telpon" placeholder="No Telepon">
-                </div>
-                <div class="form-group mt-2">
-                    <textarea class="form-control" name="alamat" placeholder="Alamat Lengkap"></textarea>
-                </div>
-                <div class="form-group mt-2">
-                    <select class="form-control" name="jenis_kelamin">
-                        <option value="">--Pilih Gender--</option>
-                        <option value="L">Laki-laki</option>
-                        <option value="P">Perempuan</option>
-                    </select>
-                </div>
-        <!-- ---------------------------------------------------------------------------- -->
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button class="btn btn-success mt-2" type="submit" name="simpan">Simpan</button>
-        </div>
-            <!-- tag tutup formnya pinda ke sini -->
-            </form>
-            <!-- ------------------------------- -->
+                    <div class="form-group mt-2">
+                        <input class="form-control" type="text" name="nomor_telepon" placeholder="Nomor Telepon">
+                    </div>
+                    <div class="form-group mt-2">
+                        <textarea name="alamat" class="form-control" placeholder="Alamat Lengkap"></textarea>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" name="save" class="btn btn-primary">Save changes</button>
+                </form>
+            </div>
+            </div>
         </div>
     </div>
-</div>
-<?php
-}
-?>
